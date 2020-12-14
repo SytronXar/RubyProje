@@ -85,17 +85,27 @@ def CheckMovement(input)
     secilenTas=$Tahta[nDikey][nYatay]
     hedef=$Tahta[mDikey][mYatay]
     #harfe göre aşağıda case when yapılıyor.
-    case (secilenTas.upcase)
-    when "P"
-        return PiyonHareketi()
-    when "F"
-        return FilHareketi()
-    when "A"
-        return AtHareketi()
-    else
-        return 0
+    if HedefKontrolu()
+        case (secilenTas.upcase)
+        when "P"
+            return PiyonHareketi()
+        when "F"
+            return FilHareketi()
+        when "A"
+            return AtHareketi()
+        when "K"
+            return KaleHareketi()
+        when "V"
+            return VezirHareketi()
+        when "S"
+            return SahHareketi()
+        else
+            return 0
+        end
     end
+    return 0
 end
+
 
 #Piyonu daha tamamlayamadım tamamlayabilirsiniz, piyonda başlangıçta iki ileri olmalı, geçerken al olayı eklenebilir
 def PiyonHareketi()
@@ -103,15 +113,18 @@ def PiyonHareketi()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    if($Tahta[a][b].upcase==$Tahta[a][b])#Secilen Harf Büyük mü?
-        if c=a+1 && d==b
-            return $normal
-        end
+    if c=a+1 && d==b
+        return $normal
     end
+    return $cikmaz
 end
 
 def FilHareketi()
-
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    return $cikmaz
 end
 
 def AtHareketi()
@@ -125,6 +138,28 @@ def AtHareketi()
     return $cikmaz;
 end
 
+def KaleHareketi()
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    return $cikmaz
+end
+def VezirHareketi()
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    return $cikmaz
+end
+def SahHareketi()
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    return $cikmaz
+end
+
 def Move()
     a=$LMove.nDikey
     b=$LMove.nYatay
@@ -132,6 +167,18 @@ def Move()
     d=$LMove.mYatay
     $Tahta[c][d]=$Tahta[a][b]
     $Tahta[a][b]=" "
+end
+def HedefKontrolu() 
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    hedeftas=$Tahta[c][d]
+    isItBig=hedeftas.ord<65
+    if sira%2==0 && isItBig || sira%2==1 && !isItBig || hedeftas=" "
+        return true
+    end
+    return false
 end
 
 def OyunBaşlat()

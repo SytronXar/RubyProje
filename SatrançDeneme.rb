@@ -6,7 +6,7 @@ $Tahta=x = Array.new(8){ Array.new(8) }# 8x8 dizi belirledik
 $gameOver=false #Oyun bitimi kontrolü
 $Coords=Struct.new(:nDikey,:nYatay,:mDikey,:mYatay)
 $LMove=$Coords.new(0,0,0,0)
-$sira=0;
+$sira=1;
 
 #alttaki tanımlanan değişkenler, santrançtaki bazı özel hareketler için tanımlanmıştır
 $normal=1
@@ -103,7 +103,12 @@ def SecilenKontrolü()
     end
     return false
 end
-
+def buyukHarfKontrolü(harf)
+    return harf==harf.upcase && harf!=" "
+end
+def kucukHarfKontrolü(harf)
+    return harf==harf.downcase && harf!=" "
+end    
 def CheckMovement(input)
     #Aşağıda inputu çift boyutlu diziden elemanı seçilecek verilere dönüştürüyoruz.
     nDikey=input[0].upcase.ord-65 #A5C3 A=>0
@@ -117,6 +122,7 @@ def CheckMovement(input)
     hedef=$Tahta[mDikey][mYatay]
     #harfe göre aşağıda case when yapılıyor.
     if HedefKontrolu() && SecilenKontrolü() && input[0..1]!=input[2..3] #Hedef, Secilen Kontrolü ve Hedefle secilenin aynı olmaması kontrolü
+        puts "Tas secimi"
         case (secilenTas.upcase)
         when "P"
             return PiyonHareketi()
@@ -143,9 +149,17 @@ def PiyonHareketi()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    if c=a+1 && d==b
+    puts("Piyonnnn")
+    dF=c-a#dikey Fark
+    yF=d-b #yatay Fark
+    if ($sira%2==0 && dF==1 || $sira%2==1 && dF==-1) && yF==0  #sira 0 iken sadece ileri #sira 1 iken sadece geri
+        return $normal
+    elsif($sira%2==0 && dF==2 && a==1 && $Tahta[a+1][b]==" "|| $sira%2==1 && dF==-2 && a==6&& $Tahta[a-1][b]==" ") && yF==0 # a =1 ve a=6 konumlarında 2 ileri gidebilir ve engel kontrolü
+        return $normal
+    elsif ($sira%2==0 && dF==1 && kucukHarfKontrolü($Tahta[c][d]) || $sira%2==1 && dF==-1 && buyukHarfKontrolü($Tahta[c][d])) && yF.abs==1 #capraza ilerlerken sadece rakip taşına ilerlenir
         return $normal
     end
+    return $cikmaz
 end
 
 def FilHareketi()

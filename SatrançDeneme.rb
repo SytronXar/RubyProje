@@ -1,4 +1,7 @@
 
+
+
+# konsoldan şunu yazarak kodu çalıştırabilirsiniz : ruby satrançdeneme.rb
 $Tahta=x = Array.new(8){ Array.new(8) }# 8x8 dizi belirledik
 $gameOver=false #Oyun bitimi kontrolü
 $Coords=Struct.new(:nDikey,:nYatay,:mDikey,:mYatay)
@@ -13,6 +16,8 @@ $terfi=55
 $gecerkenal=65
 $uzunrok=111 #$kale ve şah
 $kısarok=22
+$Dikey=8
+$Yatay=8
 
 
 
@@ -73,6 +78,32 @@ def Sayi1_8(sayi)
     return sayi>0 && sayi<=8
 end
 
+def HedefKontrolu() 
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    hedeftas=$Tahta[c][d]
+    isItBig=hedeftas.upcase==hedeftas
+    if $sira%2==0 && !isItBig || $sira%2==1 && isItBig || hedeftas==" "
+        return true
+    end
+    return false
+end
+
+def SecilenKontrolü()
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    secilenftas=$Tahta[a][b]  
+    isItBig=secilenftas.upcase==secilenftas
+    if ($sira%2==0 && isItBig || $sira%2==1 && !isItBig) && secilenftas!=" "
+        return true
+    end
+    return false
+end
+
 def CheckMovement(input)
     #Aşağıda inputu çift boyutlu diziden elemanı seçilecek verilere dönüştürüyoruz.
     nDikey=input[0].upcase.ord-65 #A5C3 A=>0
@@ -85,7 +116,7 @@ def CheckMovement(input)
     secilenTas=$Tahta[nDikey][nYatay]
     hedef=$Tahta[mDikey][mYatay]
     #harfe göre aşağıda case when yapılıyor.
-    if HedefKontrolu()
+    if HedefKontrolu() && SecilenKontrolü()
         case (secilenTas.upcase)
         when "P"
             return PiyonHareketi()
@@ -100,12 +131,11 @@ def CheckMovement(input)
         when "S"
             return SahHareketi()
         else
-            return 0
+            return $cikmaz
         end
     end
-    return 0
+    return $cikmaz
 end
-
 
 #Piyonu daha tamamlayamadım tamamlayabilirsiniz, piyonda başlangıçta iki ileri olmalı, geçerken al olayı eklenebilir
 def PiyonHareketi()
@@ -116,7 +146,6 @@ def PiyonHareketi()
     if c=a+1 && d==b
         return $normal
     end
-    return $cikmaz
 end
 
 def FilHareketi()
@@ -124,15 +153,24 @@ def FilHareketi()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    return $cikmaz
-end
-
-def AtHareketi()
-    a=$LMove.nDikey
-    b=$LMove.nYatay
-    c=$LMove.mDikey
-    d=$LMove.mYatay
-    if((c==a+2||c==a-2)&&(d==b+1||d==b-1))||((d==b+2||d==b-2)&&(c==a+1||c==a-1))
+    puts("Fillll")
+    dF=c-a#dikey Fark
+    yF=d-b #dikey Fark
+    eksenfarki=dF.abs- yF.abs
+    puts "EksenFarki=#{eksenfarki}"
+    if eksenfarki==0   
+        dB=dF/dF.abs #dikey Birim fark
+        yB=yF/yF.abs #dikey Birim fark
+        fA=dF.abs#herhangi bir eksenin farkının mutlağı(for için)
+        x=a
+        y=b
+        for i in 1..fA-1 do
+            x=x+i*dB
+            y=y+i*yB
+            if $Tahta[x][y]!=" "
+               return $cikmaz 
+            end
+        end
         return $normal; 
     end
     return $cikmaz;
@@ -143,21 +181,32 @@ def KaleHareketi()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    return $cikmaz
+    puts("Kaleeee")
+
+    if a==c && b!=d || b==d && a!=c   
+        return $normal; 
+    end
+    return $cikmaz;
 end
+
 def VezirHareketi()
-    a=$LMove.nDikey
-    b=$LMove.nYatay
-    c=$LMove.mDikey
-    d=$LMove.mYatay
-    return $cikmaz
+    puts("Vezirrrr")
+    if FilHareketi()!=$cikmaz || KaleHareketi()!=$cikmaz 
+        return $normal; 
+    end
+    return $cikmaz;
 end
-def SahHareketi()
+
+def AtHareketi()
     a=$LMove.nDikey
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    return $cikmaz
+    puts("Attttt")
+    if ((c==a+2||c==a-2)&&(d==b+1||d==b-1))||((d==b+2||d==b-2)&&(c==a+1||c==a-1))
+        return $normal; 
+    end
+    return $cikmaz;
 end
 
 def Move()
@@ -167,18 +216,6 @@ def Move()
     d=$LMove.mYatay
     $Tahta[c][d]=$Tahta[a][b]
     $Tahta[a][b]=" "
-end
-def HedefKontrolu() 
-    a=$LMove.nDikey
-    b=$LMove.nYatay
-    c=$LMove.mDikey
-    d=$LMove.mYatay
-    hedeftas=$Tahta[c][d]
-    isItBig=hedeftas.ord<65
-    if sira%2==0 && isItBig || sira%2==1 && !isItBig || hedeftas=" "
-        return true
-    end
-    return false
 end
 
 def OyunBaşlat()

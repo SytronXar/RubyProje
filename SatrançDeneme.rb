@@ -116,7 +116,7 @@ def CheckMovement(input)
     secilenTas=$Tahta[nDikey][nYatay]
     hedef=$Tahta[mDikey][mYatay]
     #harfe göre aşağıda case when yapılıyor.
-    if HedefKontrolu() && SecilenKontrolü()
+    if HedefKontrolu() && SecilenKontrolü() && input[0..1]!=input[2..3] #Hedef, Secilen Kontrolü ve Hedefle secilenin aynı olmaması kontrolü
         case (secilenTas.upcase)
         when "P"
             return PiyonHareketi()
@@ -155,13 +155,12 @@ def FilHareketi()
     d=$LMove.mYatay
     puts("Fillll")
     dF=c-a#dikey Fark
-    yF=d-b #dikey Fark
+    yF=d-b #yatay Fark
     eksenfarki=dF.abs- yF.abs
-    puts "EksenFarki=#{eksenfarki}"
     if eksenfarki==0   
         dB=dF/dF.abs #dikey Birim fark
-        yB=yF/yF.abs #dikey Birim fark
-        fA=dF.abs#herhangi bir eksenin farkının mutlağı(for için)
+        yB=yF/yF.abs #yatay Birim fark
+        fA=dF.abs #herhangi bir eksenin farkının mutlağı(for için)
         x=a
         y=b
         for i in 1..fA-1 do
@@ -182,8 +181,21 @@ def KaleHareketi()
     c=$LMove.mDikey
     d=$LMove.mYatay
     puts("Kaleeee")
-
-    if a==c && b!=d || b==d && a!=c   
+    dF=c-a#dikey Fark
+    yF=d-b #yatay Fark
+    if a==c && b!=d || b==d && a!=c
+        x=a
+        y=b
+        dB=dF!=0 ? dF/dF.abs : 0 #dikey Birim fark
+        yB=yF!=0 ? yF/yF.abs : 0 #yatay Birim fark
+        fA=[dF,yF].max.abs
+        for i in 1..fA-1 do
+            x=x+i*dB
+            y=y+i*yB
+            if $Tahta[x][y]!=" "
+               return $cikmaz 
+            end
+        end
         return $normal; 
     end
     return $cikmaz;

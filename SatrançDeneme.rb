@@ -164,8 +164,9 @@ def FilHareketi()
         x=a
         y=b
         for i in 1..fA-1 do
-            x=x+i*dB
-            y=y+i*yB
+            x=a+i*dB
+            y=b+i*yB
+            puts("x:#{x}, y:#{y}")
             if $Tahta[x][y]!=" "
                return $cikmaz 
             end
@@ -190,8 +191,8 @@ def KaleHareketi()
         yB=yF!=0 ? yF/yF.abs : 0 #yatay Birim fark
         fA=[dF,yF].max.abs
         for i in 1..fA-1 do
-            x=x+i*dB
-            y=y+i*yB
+            x=a+i*dB
+            y=b+i*yB
             if $Tahta[x][y]!=" "
                return $cikmaz 
             end

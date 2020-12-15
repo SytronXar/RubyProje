@@ -189,7 +189,7 @@ def KaleHareketi()
         y=b
         dB=dF!=0 ? dF/dF.abs : 0 #dikey Birim fark
         yB=yF!=0 ? yF/yF.abs : 0 #yatay Birim fark
-        fA=[dF,yF].max.abs
+        fA=[dF.abs,yF.abs].max
         for i in 1..fA-1 do
             x=a+i*dB
             y=b+i*yB

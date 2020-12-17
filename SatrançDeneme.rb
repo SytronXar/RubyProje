@@ -262,10 +262,11 @@ def Move()
     d=$LMove.mYatay
     if $Tahta[c][d].upcase=="S"
         $gameOver=true
+    else
+        $sira++
     end
     $Tahta[c][d]=$Tahta[a][b]
     $Tahta[a][b]=" "
-    $sira++
 end
 
 def OyunBaşlat()

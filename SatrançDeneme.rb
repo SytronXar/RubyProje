@@ -23,6 +23,7 @@ $Yatay=8
 
 
 def PrintBoard()
+    system "cls || clear"
     print "   "
     for n in 1..8
         print "#{n} " #Üstteki sayılar

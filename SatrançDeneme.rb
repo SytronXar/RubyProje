@@ -248,7 +248,7 @@ def SahHareketi()
     d=$LMove.mYatay  
     dFA=(c-a).abs #dikey Fark abs
     yFA=(d-b).abs #yatay Fark abs
-    puts("Attttt")
+    puts("Sahhh")
     if dfA<=1 && yFA<=1 #Sah dikey ve yatayda en fazla birer birim hareket edebilir
         return $normal; 
     end

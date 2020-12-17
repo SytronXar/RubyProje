@@ -235,7 +235,7 @@ def AtHareketi()
     dFA=(c-a).abs #dikey Fark abs
     yFA=(d-b).abs #yatay Fark abs
     puts("Attttt")
-    if dfA==2 && yFA==1 || dFA==1 && yFA==2 #At 1,2 ya da 2,1 hareketi gerçekleştirir.
+    if dFA==2 && yFA==1 || dFA==1 && yFA==2 #At 1,2 ya da 2,1 hareketi gerçekleştirir.
         return $normal; 
     end
     return $cikmaz;

@@ -7,6 +7,7 @@ $gameOver=false #Oyun bitimi kontrolü
 $Coords=Struct.new(:nDikey,:nYatay,:mDikey,:mYatay)
 $LMove=$Coords.new(0,0,0,0)
 $sira=0;
+$Taslar= ['K','A','F','S','V']
 
 #alttaki tanımlanan değişkenler, santrançtaki bazı özel hareketler için tanımlanmıştır
 $normal=1
@@ -23,7 +24,7 @@ $Yatay=8
 
 
 def PrintBoard()
-    system "cls || clear"
+    system "@cls || clear"
     print "   "
     for n in 1..8
         print "#{n} " #Üstteki sayılar
@@ -64,6 +65,13 @@ def StartBoard()
         end
     end  
     PrintBoard()
+end
+
+def TasKontrolu(harf)
+    if $Taslar.include? harf.upcase
+        return true
+    end
+    return false
 end
 
 def CheckInput(input)
@@ -166,18 +174,23 @@ def PiyonHareketi()
     yF=d-b #yatay Fark
     dFA=dF.abs
     yFA=yF.abs
+    key=$cikmaz
     if $sira%2==0 && dF>0 || $sira%2==1 && dF<0   #1. oyuncu sadece pozitif yönde ileri, 2. oyuncu sadece negatif yönde ileri
+        
         if $Tahta[c][d] == " "
             if dFA==1 && yF==0  #1 ileri
-                return $normal
+                key = $normal
             elsif(dF==2 && a==1 || dF==-2 && a==6) && yF==0 && $Tahta[(a+c)/2][b]==" " #piyon başlangıç konumlarında 2 ileri ve engel kontrolü
-                return $normal
+                key = $normal
             end
         elsif dFA==1 && yFA==1 #çapraz harekette hedef boşluk olmamalıdır oyüzden elsif te tanımlanmıştır.
-            return $normal
+            key = $normal
+        end
+        if (c==7 || c==0)&&key==$normal #tahtanın sonu ise terfi key döndür.
+            return $terfi
         end
     end
-    return $cikmaz
+    return key
 end
 
 def FilHareketi()
@@ -264,19 +277,40 @@ def SahHareketi()
     return $cikmaz;
 end
 
-def Move()
+def Move(key)
     a=$LMove.nDikey
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
     if $Tahta[c][d].upcase=="S"
         $gameOver=true
+        return;
     else
-        $sira=$sira+1
+        #$sira=$sira+1
     end
 
     $Tahta[c][d]=$Tahta[a][b]
     $Tahta[a][b]=" "
+    case (key)
+    when $terfi
+        Terfi()
+    end
+end
+
+def Terfi()
+    c=$LMove.mDikey
+    d=$LMove.mYatay
+    dogruSecim=false
+    while dogruSecim==false
+        print "Tas secin:"
+        input=gets.chomp
+        if TasKontrolu(input)
+            $Tahta[c][d]= $sira%2==0 ? input.upcase : input.downcase
+            puts "Terfi edildi"
+            dogruSecim=true
+        end
+    end
+
 end
 
 def OyunBaşlat()
@@ -288,12 +322,13 @@ def OyunBaşlat()
         print "NerdenNereye:"
         input=gets #kullanıcıdan hedefi iste
         puts ""
-        if input.include? 'exit'
+        if input.downcase.include? 'exit'
                 cikis=true
                 puts "Çıkış"
         elsif CheckInput(input) #Doğru tuşlandı mı
-                if CheckMovement(input) != 0 #Hareket geçerli bir hareket mi?
-                    Move() #Hareket ettir ve tahtayı yazdır.
+            movementKey=CheckMovement(input)
+                if movementKey != 0 #Hareket geçerli bir hareket mi?
+                    Move(movementKey) #Hareket ettir ve tahtayı yazdır.
                     PrintBoard()
                 else puts("hatalı hareket")
                 end

@@ -122,19 +122,25 @@ def CheckMovement(input)
     hedef=$Tahta[mDikey][mYatay]
     #harfe göre aşağıda case when yapılıyor.
     if HedefKontrolu() && SecilenKontrolü() && input[0..1]!=input[2..3] #Hedef, Secilen Kontrolü ve Hedefle secilenin aynı olmaması kontrolü
-        puts "Tas secimi"
+        puts "Tas secimi:"
         case (secilenTas.upcase)
         when "P"
+            puts("Piyon")
             return PiyonHareketi()
-        when "F"
+        when "F"  
+            puts("Fil")
             return FilHareketi()
         when "A"
+            puts("At")
             return AtHareketi()
         when "K"
+            puts("Kale")
             return KaleHareketi()
         when "V"
+            puts("Vezirrrr")
             return VezirHareketi()
         when "S"
+            puts("Sahhhh")
             return SahHareketi()
         else
             return $cikmaz
@@ -149,17 +155,17 @@ def PiyonHareketi()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    puts("Piyonnnn")
     dF=c-a#dikey Fark
     yF=d-b #yatay Fark
     dFA=dF.abs
     yFA=yF.abs
     if $sira%2==0 && dF>0 || $sira%2==1 && dF<0   #1. oyuncu sadece pozitif yönde ileri, 2. oyuncu sadece negatif yönde ileri
-        if dFA==1 && yF==0  #1 ileri
-            return $normal
-        elsif(dF==2 && a==1 || dF==-2 && a==6) && yF==0 && $Tahta[(a+c)/2][b]==" " #piyon başlangıç konumlarında 2 ileri ve engel kontrolü
-            return $normal
-        elsif dFA==1 && yFA==1 && $Tahta[c][d]!=" " #capraza ilerlerken sadece rakip taşına ilerlenir, neden rakip tas kontrolü değilde boşluk kontrolü yaptık, oyun zaten hedef kontrolü yapıyor.
+        if $Tahta[c][d] == " "
+            if dFA==1 && yF==0  #1 ileri
+                return $normal
+            elsif(dF==2 && a==1 || dF==-2 && a==6) && yF==0 && $Tahta[(a+c)/2][b]==" " #piyon başlangıç konumlarında 2 ileri ve engel kontrolü
+                return $normal
+        elsif dFA==1 && yFA==1 #çapraz harekette hedef boşluk olmamalıdır oyüzden elsif te tanımlanmıştır.
             return $normal
         end
     end
@@ -171,7 +177,6 @@ def FilHareketi()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    puts("Fillll")
     dF=c-a#dikey Fark
     yF=d-b #yatay Fark
     eksenfarki=dF.abs- yF.abs
@@ -198,7 +203,6 @@ def KaleHareketi()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
-    puts("Kaleeee")
     dF=c-a#dikey Fark
     yF=d-b #yatay Fark
     if a==c && b!=d || b==d && a!=c # kale hareketinde eksenlerden sadece birinde değişim olur.
@@ -220,7 +224,6 @@ def KaleHareketi()
 end
 
 def VezirHareketi()
-    puts("Vezirrrr")
     if FilHareketi()!=$cikmaz || KaleHareketi()!=$cikmaz #Vezirin hareketi fil ile kale hareketlerinin birleşiminden oluşur.
         return $normal; 
     end
@@ -234,7 +237,6 @@ def AtHareketi()
     d=$LMove.mYatay  
     dFA=(c-a).abs #dikey Fark abs
     yFA=(d-b).abs #yatay Fark abs
-    puts("Attttt")
     if dFA==2 && yFA==1 || dFA==1 && yFA==2 #At 1,2 ya da 2,1 hareketi gerçekleştirir.
         return $normal; 
     end
@@ -248,8 +250,7 @@ def SahHareketi()
     d=$LMove.mYatay  
     dFA=(c-a).abs #dikey Fark abs
     yFA=(d-b).abs #yatay Fark abs
-    puts("Sahhh")
-    if dfA<=1 && yFA<=1 #Sah dikey ve yatayda en fazla birer birim hareket edebilir
+    if dFA<=1 && yFA<=1 #Sah dikey ve yatayda en fazla birer birim hareket edebilir
         return $normal; 
     end
     return $cikmaz;
@@ -274,7 +275,7 @@ def OyunBaşlat()
     $gameOver=false
     cikis=false
     StartBoard() #Tahtayı Başlat
-    while !$gameOver || cikis==true
+    while !$gameOver || cikis==false
        print "NerdenNereye:"
        input=gets #kullanıcıdan hedefi iste
        if input.include? 'exit'
@@ -288,7 +289,7 @@ def OyunBaşlat()
             end
        end
     end
-    if $gameover==true
+    if $gameover
         puts "Oyun bitti, #{$sira%2+1}. oyuncu kazandı."
         puts "Toplamda #{$sira} hamle gerçekleşti."
     end

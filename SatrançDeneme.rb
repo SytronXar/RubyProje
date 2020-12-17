@@ -263,8 +263,9 @@ def Move()
     if $Tahta[c][d].upcase=="S"
         $gameOver=true
     else
-        $sira++
+        $sira=$sira+1
     end
+
     $Tahta[c][d]=$Tahta[a][b]
     $Tahta[a][b]=" "
 end

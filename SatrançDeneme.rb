@@ -6,7 +6,7 @@ $Tahta=x = Array.new(8){ Array.new(8) }# 8x8 dizi belirledik
 $gameOver=false #Oyun bitimi kontrolü
 $Coords=Struct.new(:nDikey,:nYatay,:mDikey,:mYatay)
 $LMove=$Coords.new(0,0,0,0)
-$sira=1;
+$sira=0;
 
 #alttaki tanımlanan değişkenler, santrançtaki bazı özel hareketler için tanımlanmıştır
 $normal=1
@@ -152,12 +152,16 @@ def PiyonHareketi()
     puts("Piyonnnn")
     dF=c-a#dikey Fark
     yF=d-b #yatay Fark
-    if ($sira%2==0 && dF==1 || $sira%2==1 && dF==-1) && yF==0  #sira 0 iken sadece ileri #sira 1 iken sadece geri
-        return $normal
-    elsif($sira%2==0 && dF==2 && a==1 && $Tahta[a+1][b]==" "|| $sira%2==1 && dF==-2 && a==6&& $Tahta[a-1][b]==" ") && yF==0 # a =1 ve a=6 konumlarında 2 ileri gidebilir ve engel kontrolü
-        return $normal
-    elsif ($sira%2==0 && dF==1 && kucukHarfKontrolü($Tahta[c][d]) || $sira%2==1 && dF==-1 && buyukHarfKontrolü($Tahta[c][d])) && yF.abs==1 #capraza ilerlerken sadece rakip taşına ilerlenir
-        return $normal
+    dFA=dF.abs
+    yFA=yF.abs
+    if $sira%2==0 && dF>0 || $sira%2==1 && dF<0   #1. oyuncu sadece pozitif yönde ileri, 2. oyuncu sadece negatif yönde ileri
+        if dFA==1 && yF==0  #1 ileri
+            return $normal
+        elsif(dF==2 && a==1 || dF==-2 && a==6) && yF==0 && $Tahta[(a+c)/2][b]==" " #piyon başlangıç konumlarında 2 ileri ve engel kontrolü
+            return $normal
+        elsif dFA==1 && yFA==1 && $Tahta[c][d]!=" " #capraza ilerlerken sadece rakip taşına ilerlenir, neden rakip tas kontrolü değilde boşluk kontrolü yaptık, oyun zaten hedef kontrolü yapıyor.
+            return $normal
+        end
     end
     return $cikmaz
 end
@@ -171,16 +175,15 @@ def FilHareketi()
     dF=c-a#dikey Fark
     yF=d-b #yatay Fark
     eksenfarki=dF.abs- yF.abs
-    if eksenfarki==0   
+    if eksenfarki==0   #çapraz harekette eksenler arası değişim farkı 0 olmaktadır.
         dB=dF/dF.abs #dikey Birim fark
         yB=yF/yF.abs #yatay Birim fark
         fA=dF.abs #herhangi bir eksenin farkının mutlağı(for için)
         x=a
         y=b
-        for i in 1..fA-1 do
+        for i in 1..fA-1 do #hedef ile konum arası engel bulmaya yarayan for
             x=a+i*dB
             y=b+i*yB
-            puts("x:#{x}, y:#{y}")
             if $Tahta[x][y]!=" "
                return $cikmaz 
             end
@@ -198,13 +201,13 @@ def KaleHareketi()
     puts("Kaleeee")
     dF=c-a#dikey Fark
     yF=d-b #yatay Fark
-    if a==c && b!=d || b==d && a!=c
+    if a==c && b!=d || b==d && a!=c # kale hareketinde eksenlerden sadece birinde değişim olur.
         x=a
         y=b
         dB=dF!=0 ? dF/dF.abs : 0 #dikey Birim fark
         yB=yF!=0 ? yF/yF.abs : 0 #yatay Birim fark
         fA=[dF.abs,yF.abs].max
-        for i in 1..fA-1 do
+        for i in 1..fA-1 do #hedef ile konum arasında engel olup olmadığını bulmaya yarayan for döngüsü
             x=a+i*dB
             y=b+i*yB
             if $Tahta[x][y]!=" "
@@ -218,7 +221,7 @@ end
 
 def VezirHareketi()
     puts("Vezirrrr")
-    if FilHareketi()!=$cikmaz || KaleHareketi()!=$cikmaz 
+    if FilHareketi()!=$cikmaz || KaleHareketi()!=$cikmaz #Vezirin hareketi fil ile kale hareketlerinin birleşiminden oluşur.
         return $normal; 
     end
     return $cikmaz;
@@ -228,9 +231,25 @@ def AtHareketi()
     a=$LMove.nDikey
     b=$LMove.nYatay
     c=$LMove.mDikey
-    d=$LMove.mYatay
+    d=$LMove.mYatay  
+    dFA=(c-a).abs #dikey Fark abs
+    yFA=(d-b).abs #yatay Fark abs
     puts("Attttt")
-    if ((c==a+2||c==a-2)&&(d==b+1||d==b-1))||((d==b+2||d==b-2)&&(c==a+1||c==a-1))
+    if dfA==2 && yFA==1 || dFA==1 && yFA==2 #At 1,2 ya da 2,1 hareketi gerçekleştirir.
+        return $normal; 
+    end
+    return $cikmaz;
+end
+
+def SahHareketi()
+    a=$LMove.nDikey
+    b=$LMove.nYatay
+    c=$LMove.mDikey
+    d=$LMove.mYatay  
+    dFA=(c-a).abs #dikey Fark abs
+    yFA=(d-b).abs #yatay Fark abs
+    puts("Attttt")
+    if dfA<=1 && yFA<=1 #Sah dikey ve yatayda en fazla birer birim hareket edebilir
         return $normal; 
     end
     return $cikmaz;
@@ -241,28 +260,35 @@ def Move()
     b=$LMove.nYatay
     c=$LMove.mDikey
     d=$LMove.mYatay
+    if $Tahta[c][d].upcase=="S"
+        $gameOver=true
+    end
     $Tahta[c][d]=$Tahta[a][b]
     $Tahta[a][b]=" "
+    $sira++
 end
 
 def OyunBaşlat()
     $gameOver=false
+    cikis=false
     StartBoard() #Tahtayı Başlat
-    while !$gameOver
+    while !$gameOver || cikis==true
        print "NerdenNereye:"
        input=gets #kullanıcıdan hedefi iste
        if input.include? 'exit'
-            $gameOver=true
+            cikis=true
             puts "Çıkış"
        elsif CheckInput(input) #Doğru tuşlandı mı
-        puts(5301)
             if CheckMovement(input) != 0 #Hareket geçerli bir hareket mi?
-                puts(4001)
                 Move() #Hareket ettir ve tahtayı yazdır.
                 PrintBoard()
             else puts("hatalı hareket")
             end
        end
+    end
+    if $gameover==true
+        puts "Oyun bitti, #{$sira%2+1}. oyuncu kazandı."
+        puts "Toplamda #{$sira} hamle gerçekleşti."
     end
 end
 

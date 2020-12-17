@@ -122,25 +122,31 @@ def CheckMovement(input)
     hedef=$Tahta[mDikey][mYatay]
     #harfe göre aşağıda case when yapılıyor.
     if HedefKontrolu() && SecilenKontrolü() && input[0..1]!=input[2..3] #Hedef, Secilen Kontrolü ve Hedefle secilenin aynı olmaması kontrolü
-        puts "Tas secimi:"
+        print "Tas secimi:"
         case (secilenTas.upcase)
         when "P"
-            puts("Piyon")
+            print("Piyon")
+            puts ""
             return PiyonHareketi()
         when "F"  
-            puts("Fil")
+            print("Fil")
+            puts ""
             return FilHareketi()
         when "A"
-            puts("At")
+            print("At")
+            puts ""
             return AtHareketi()
         when "K"
-            puts("Kale")
+            print("Kale")
+            puts ""
             return KaleHareketi()
         when "V"
-            puts("Vezirrrr")
+            print("Vezir")
+            puts ""
             return VezirHareketi()
         when "S"
-            puts("Sahhhh")
+            print("Sah")
+            puts ""
             return SahHareketi()
         else
             return $cikmaz
@@ -165,6 +171,7 @@ def PiyonHareketi()
                 return $normal
             elsif(dF==2 && a==1 || dF==-2 && a==6) && yF==0 && $Tahta[(a+c)/2][b]==" " #piyon başlangıç konumlarında 2 ileri ve engel kontrolü
                 return $normal
+            end
         elsif dFA==1 && yFA==1 #çapraz harekette hedef boşluk olmamalıdır oyüzden elsif te tanımlanmıştır.
             return $normal
         end
@@ -275,21 +282,23 @@ def OyunBaşlat()
     $gameOver=false
     cikis=false
     StartBoard() #Tahtayı Başlat
-    while !$gameOver || cikis==false
-       print "NerdenNereye:"
-       input=gets #kullanıcıdan hedefi iste
-       if input.include? 'exit'
-            cikis=true
-            puts "Çıkış"
-       elsif CheckInput(input) #Doğru tuşlandı mı
-            if CheckMovement(input) != 0 #Hareket geçerli bir hareket mi?
-                Move() #Hareket ettir ve tahtayı yazdır.
-                PrintBoard()
-            else puts("hatalı hareket")
-            end
-       end
+    while !$gameOver && cikis==false
+        puts "Sıra: #{$sira%2+1} "
+        print "NerdenNereye:"
+        input=gets #kullanıcıdan hedefi iste
+        puts ""
+        if input.include? 'exit'
+                cikis=true
+                puts "Çıkış"
+        elsif CheckInput(input) #Doğru tuşlandı mı
+                if CheckMovement(input) != 0 #Hareket geçerli bir hareket mi?
+                    Move() #Hareket ettir ve tahtayı yazdır.
+                    PrintBoard()
+                else puts("hatalı hareket")
+                end
+        end
     end
-    if $gameover
+    if $gameOver
         puts "Oyun bitti, #{$sira%2+1}. oyuncu kazandı."
         puts "Toplamda #{$sira} hamle gerçekleşti."
     end

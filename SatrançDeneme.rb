@@ -286,7 +286,7 @@ def Move(key)
         $gameOver=true
         return;
     else
-        #$sira=$sira+1
+        $sira+=1
     end
 
     $Tahta[c][d]=$Tahta[a][b]

@@ -336,6 +336,7 @@ def OyunBaşlat()
             end
         end
         if $gameOver
+            PrintBoard()
             puts "Oyun bitti, #{$sira%2+1}. oyuncu kazandı."
             puts "Toplamda #{$sira} hamle gerçekleşti."
         end

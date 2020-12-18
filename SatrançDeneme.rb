@@ -301,7 +301,7 @@ def Terfi()
     d=$LMove.mYatay
     dogruSecim=false
     while dogruSecim==false
-        print "Tas secin:"
+        print "Tas secin örneğin: Vezir için 'v'":
         input=gets.chomp
         if TasKontrolu(input)
             $Tahta[c][d]= $sira%2==0 ? input.upcase : input.downcase

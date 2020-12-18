@@ -286,14 +286,13 @@ def Move(key)
         $gameOver=true
         return;
     else
+        $Tahta[c][d]=$Tahta[a][b]
+        $Tahta[a][b]=" "
+        case (key)
+        when $terfi
+            Terfi()
+        end
         $sira+=1
-    end
-
-    $Tahta[c][d]=$Tahta[a][b]
-    $Tahta[a][b]=" "
-    case (key)
-    when $terfi
-        Terfi()
     end
 end
 

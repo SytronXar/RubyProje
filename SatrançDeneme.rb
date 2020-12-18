@@ -313,29 +313,42 @@ def Terfi()
 end
 
 def OyunBaşlat()
-    $gameOver=false
-    cikis=false
-    StartBoard() #Tahtayı Başlat
-    while !$gameOver && cikis==false
-        puts "Sıra: #{$sira%2+1} "
-        print "NerdenNereye:"
-        input=gets #kullanıcıdan hedefi iste
-        puts ""
-        if input.downcase.include? 'exit'
-                cikis=true
-                puts "Çıkış"
-        elsif CheckInput(input) #Doğru tuşlandı mı
-            movementKey=CheckMovement(input)
-                if movementKey != 0 #Hareket geçerli bir hareket mi?
-                    Move(movementKey) #Hareket ettir ve tahtayı yazdır.
-                    PrintBoard()
-                else puts("hatalı hareket")
-                end
+    tekrar=true
+    while tekrar
+        $gameOver=false
+        cikis=false
+        StartBoard() #Tahtayı Başlat
+        while !$gameOver && cikis==false
+            puts "Sıra: #{$sira%2+1} "
+            print "NerdenNereye:"
+            input=gets #kullanıcıdan hedefi iste
+            puts ""
+            if input.downcase.include? 'exit'
+                    cikis=true
+                    puts "Çıkış"
+            elsif CheckInput(input) #Doğru tuşlandı mı
+                movementKey=CheckMovement(input)
+                    if movementKey != 0 #Hareket geçerli bir hareket mi?
+                        Move(movementKey) #Hareket ettir ve tahtayı yazdır.
+                        PrintBoard()
+                    else puts("hatalı hareket")
+                    end
+            end
         end
-    end
-    if $gameOver
-        puts "Oyun bitti, #{$sira%2+1}. oyuncu kazandı."
-        puts "Toplamda #{$sira} hamle gerçekleşti."
+        if $gameOver
+            puts "Oyun bitti, #{$sira%2+1}. oyuncu kazandı."
+            puts "Toplamda #{$sira} hamle gerçekleşti."
+        end
+        while true
+            print "Tekrar başlatılsın mı?(e/h)"
+            input = gets.chomp
+            if input.downcase = "e"
+                break
+            elsif input.downcase = "h"
+                tekrar=false
+                break
+            end
+        end
     end
 end
 
